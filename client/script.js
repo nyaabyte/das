@@ -1,4 +1,5 @@
-let ws;
+let ws, channel;
+let channels = {};
 function connect() {
   if (ws && ws.readyState == WebSocket.OPEN) return;
   ws = new WebSocket('ws://localhost:6565/' + un + '/' + pw);
@@ -9,16 +10,23 @@ function connect() {
   }
   ws.onmessage = x => {
     let d = JSON.parse(x.data);
+    console.log(d);
     switch(d.type) {
       case 'bad':
         localStorage.un = un = prompt('username');
         localStorage.pw = pw = prompt('password');
         break;
-      case 'channels':
-        
+      case 'server':
+        document.querySelector('#channels')
+        d.channels.forEach(x => {
+          document.querySelector('#channels').innerHTML += '<b onclick="switchchannel(\'' + x[1] + '\')">' + x[0] + '</b><br>';
+        });
+        channels = Object.fromEntries(d.channels.map(x => [x[1], x[0]]));
         break;
       case 'msgs':
+        if (d.channel != channel) break;
         document.querySelector('#msg').style.display = 'inline';
+        d.content.forEach(x => createmsg(x.user, x.data));
         break;
     }
   }
@@ -57,6 +65,11 @@ function clearmsg() {
 
 function switchchannel(c) {
   channel = c;
+  document.querySelector('#channel').innerText = channels[channel];
   clearmsg();
   document.querySelector('#msg').style.display = 'none';
+  ws.send(JSON.stringify({
+    type: 'getmsgs',
+    channel
+  }))
 }

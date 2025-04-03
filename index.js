@@ -65,7 +65,7 @@ wss.on('connection', async (ws, req) => {
         m = await c.messages.fetch({ limit: 100 });
         ws.send(JSON.stringify({
           type: 'msgs',
-          channel: x.id,
+          channel: d.channel,
           content: m.map(x => ({
             data: x.content,
             user: x.author.globalName || x.author.username,
