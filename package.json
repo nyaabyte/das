@@ -1,0 +1,24 @@
+{
+  "name": "discordatschool",
+  "version": "1.0.0",
+  "description": "i need this",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meowguard/discordatschool.git"
+  },
+  "author": "geodebreaker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meowguard/discordatschool/issues"
+  },
+  "homepage": "https://github.com/meowguard/discordatschool#readme",
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "ws": "^8.18.1"
+  }
+}
