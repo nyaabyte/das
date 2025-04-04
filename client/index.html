@@ -2,6 +2,9 @@
 <style>
   body {
     margin: 0px;
+    background: black;
+    color: white;
+    font-family: monospace;
   }
 
   #channels {
@@ -9,7 +12,8 @@
     padding: 8px;
     height: calc(100vh - 16px);
     width: 200px;
-    border-right: 1px solid black;
+    border-right: 1px solid white;
+    overflow: scroll;
   }
 
   #msgs {
@@ -22,9 +26,12 @@
     margin: 4px;
     height: 24px;
     width: calc(100% - 226px);
-    border: 1px solid black;
+    border: 1px solid white;
     border-radius: 0;
     outline: none;
+    background: black;
+    color: white;
+    font-family: monospace;
   }
 
   #channel {
@@ -32,6 +39,10 @@
     right: 0;
     top: 0;
     padding: 5px;
+  }
+
+  b {
+    cursor: pointer;
   }
 </style>
 <div id="channels">

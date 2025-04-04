@@ -26,7 +26,8 @@ wss.on('connection', async (ws, req) => {
   ws.pw = req.url.split('/')[2];
   if (!users[ws.un] || users[ws.un] != ws.pw || !guild) {
     ws.send(JSON.stringify({
-      type: 'bad'
+      type: 'bad',
+      badpw: guild
     }));
     ws.close();
     return;
@@ -37,6 +38,7 @@ wss.on('connection', async (ws, req) => {
     type: 'server',
     channels: channels
       .filter(x => x.type == djs.ChannelType.GuildText)
+      .sort((a, b) => a.rawPosition - b.rawPosition)
       .map(x => [x.name, x.id])
   }));
 
@@ -61,6 +63,7 @@ wss.on('connection', async (ws, req) => {
         w.send({ content: d.data, username: ws.un + ' (at school)' });
         break;
       case 'getmsgs':
+        ws.channel = d.channel
         c = (await guild.channels.fetch()).find(x => x.id == d.channel);
         m = await c.messages.fetch({ limit: 100 });
         ws.send(JSON.stringify({
@@ -77,9 +80,20 @@ wss.on('connection', async (ws, req) => {
 });
 
 client.on("messageCreate", (message) => {
-  if (message.content.startsWith("ping")) {
-    message.channel.send("pong!");
-  }
+  let user = message.author.globalName || message.author.username;
+  wss.clients.forEach(ws => {
+    if (ws.channel == message.channelId && user != ws.un + ' (at school)')
+      ws.send(JSON.stringify({
+        type: 'message',
+        user,
+        data: message.content
+      }));
+    else if (ws.channel != message.channelId)
+      ws.send(JSON.stringify({
+        type: 'ping',
+        channel: message.channelId
+      }))
+  });
 });
 
 client.login(process.env.TOKEN);
