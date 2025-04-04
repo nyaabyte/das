@@ -2,7 +2,7 @@ let ws, channel;
 let channels = {};
 function connect() {
   if (ws && ws.readyState == WebSocket.OPEN) return;
-  ws = new WebSocket(location + un + '/' + pw);
+  ws = new WebSocket(location + encodeURI(un) + '/' + encodeURI(pw));
   ws.onopen = () => {
     localStorage.un = un;
     localStorage.pw = pw;

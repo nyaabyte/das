@@ -30,8 +30,8 @@ const server = require('http').createServer((req, res) => {
 
 const wss = new ws.Server({ server });
 wss.on('connection', async (ws, req) => {
-  ws.un = req.url.split('/')[1];
-  ws.pw = req.url.split('/')[2];
+  ws.un = decodeURI(req.url.split('/')[1]);
+  ws.pw = decodeURI(req.url.split('/')[2]);
   if (!users[ws.un] || users[ws.un] != ws.pw || !guild) {
     ws.send(JSON.stringify({
       type: 'bad',
