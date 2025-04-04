@@ -26,7 +26,7 @@ const server = require('http').createServer((req, res) => {
   req.addListener('end', () => {
     filesvr.serve(req, res);
   }).resume();
-}).listen(6565);
+}).listen(process.env.PORT || 6565);
 
 const wss = new ws.Server({ server });
 wss.on('connection', async (ws, req) => {
