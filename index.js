@@ -35,7 +35,7 @@ wss.on('connection', async (ws, req) => {
   if (!users[ws.un] || users[ws.un] != ws.pw || !guild) {
     ws.send(JSON.stringify({
       type: 'bad',
-      badpw: guild
+      badpw: !!guild
     }));
     ws.close();
     return;
