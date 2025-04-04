@@ -1,5 +1,6 @@
 require('dotenv').config();
 const djs = require("discord.js");
+const static = require('node-static');
 const ws = require('ws');
 const users = Object.fromEntries(process.env.USERS.split(',').map(x => x.split(':')))
 const client = new djs.Client({
@@ -20,7 +21,14 @@ client.on("ready", async () => {
   guild = client.guilds.cache.get(process.env.GUILD);
 });
 
-const wss = new ws.Server({ port: 6565 });
+const filesvr = new static.Server('./client');
+const server = require('http').createServer((req, res) => {
+  req.addListener('end', () => {
+    filesvr.serve(req, res);
+  }).resume();
+}).listen(6565);
+
+const wss = new ws.Server({ server });
 wss.on('connection', async (ws, req) => {
   ws.un = req.url.split('/')[1];
   ws.pw = req.url.split('/')[2];
@@ -58,7 +66,7 @@ wss.on('connection', async (ws, req) => {
         if (!w)
           w = await c.createWebhook({
             name: 'DAT-WH',
-            avatar: 'https://meowguardon.top/diane.png',
+            avatar: 'https://meowguardon.top/icon.png',
           });
         w.send({ content: d.data, username: ws.un + ' (at school)' });
         break;

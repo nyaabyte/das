@@ -2,7 +2,7 @@ let ws, channel;
 let channels = {};
 function connect() {
   if (ws && ws.readyState == WebSocket.OPEN) return;
-  ws = new WebSocket('ws://localhost:6565/' + un + '/' + pw);
+  ws = new WebSocket(location + un + '/' + pw);
   ws.onopen = () => {
     localStorage.un = un;
     localStorage.pw = pw;
@@ -37,7 +37,7 @@ function connect() {
         createmsg(d.user, d.data);
         break;
       case 'ping':
-        document.querySelector('.ping.' + d.channel).innerHTML = ' •';
+        document.querySelector('.ping' + d.channel).innerHTML = ' <span style="color:red">!</span>';
         break;
     }
   }
