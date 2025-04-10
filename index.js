@@ -51,7 +51,9 @@ wss.on('connection', async (ws, req) => {
       .filter(x => x.type == djs.ChannelType.GuildText)
       .sort((a, b) => a.rawPosition - b.rawPosition)
       .map(x => [x.name, x.id]),
-    users: userlist.map(x => [x.user.globalName || x.user.username, x.id, x.presence?.status || "offline"])
+    users: userlist
+      .filter(x => !x.bot)
+      .map(x => [x.user.globalName || x.user.username, x.id, x.presence?.status || "offline"])
       .sort((a, b) =>
         (b[2] == 'offline' ? -1 : b[2] == 'dnd' ? -2 : 1) -
         (a[2] == 'offline' ? -1 : a[2] == 'dnd' ? -2 : 1))
