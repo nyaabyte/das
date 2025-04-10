@@ -9,6 +9,8 @@ const client = new djs.Client({
     djs.GatewayIntentBits.GuildMessages,
     djs.GatewayIntentBits.MessageContent,
     djs.GatewayIntentBits.GuildWebhooks,
+    djs.GatewayIntentBits.GuildMembers,
+    djs.GatewayIntentBits.GuildPresences
   ]
 });
 /**
@@ -42,12 +44,17 @@ wss.on('connection', async (ws, req) => {
   }
 
   const channels = await guild.channels.fetch();
+  const userlist = await guild.members.fetch();
   ws.send(JSON.stringify({
     type: 'server',
     channels: channels
       .filter(x => x.type == djs.ChannelType.GuildText)
       .sort((a, b) => a.rawPosition - b.rawPosition)
-      .map(x => [x.name, x.id])
+      .map(x => [x.name, x.id]),
+    users: userlist.map(x => [x.user.globalName || x.user.username, x.id, x.presence?.status || "offline"])
+      .sort((a, b) =>
+        (b[2] == 'offline' ? -1 : b[2] == 'dnd' ? -2 : 1) -
+        (a[2] == 'offline' ? -1 : a[2] == 'dnd' ? -2 : 1))
   }));
 
   ws.on('message', async x => {
@@ -101,6 +108,16 @@ client.on("messageCreate", (message) => {
         type: 'ping',
         channel: message.channelId
       }))
+  });
+});
+
+client.on("presenceUpdate", (_, presence) => {
+  wss.clients.forEach(ws => {
+    ws.send(JSON.stringify({
+      type: 'status',
+      user: presence.member.id,
+      data: presence.status
+    }));
   });
 });
 

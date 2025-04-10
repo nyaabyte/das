@@ -35,7 +35,7 @@
     font-family: monospace;
   }
 
-  #channel {
+  #tl {
     position: absolute;
     right: 0;
     top: 0;
@@ -45,6 +45,11 @@
   b {
     cursor: pointer;
   }
+
+  #googer {
+    width: 150px;
+    cursor: pointer;
+  }
 </style>
 <div id="channels">
 
@@ -52,6 +57,12 @@
 <div id="msgs">
 
 </div>
-<span id="channel"></span>
-<input id="msg" style="display: none" onkeypress=
-  "if(event.key=='Enter'&&this.value){sendmsg(this.value);this.value=''}">
+<div id="tl">
+  <span id="channel"></span>
+  <details>
+    <summary id="googer">users</summary>
+    <span id="users"></span>
+  </details>
+</div>
+<input id="msg" style="display: none"
+  onkeypress="if(event.key=='Enter'&&this.value){sendmsg(this.value);this.value=''}">

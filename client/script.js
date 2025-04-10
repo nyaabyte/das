@@ -1,5 +1,12 @@
+const $ = x => document.querySelector(x);
 let ws, channel;
-let channels = {};
+let statuses = {
+  online: '&#128994;',
+  dnd: '&#128683;',
+  offline: '&#127761;',
+  idle: '&#127769;'
+};
+let channels = {}, users = {};
 function connect() {
   if (ws && ws.readyState == WebSocket.OPEN) return;
   ws = new WebSocket(location + encodeURI(un) + '/' + encodeURI(pw));
@@ -20,24 +27,35 @@ function connect() {
         }
         break;
       case 'server':
-        document.querySelector('#channels').innerHTML = '';
+        $('#channels').innerHTML = '';
         d.channels.forEach(x => {
-          document.querySelector('#channels').innerHTML +=
+          $('#channels').innerHTML +=
             '<b onclick="switchchannel(\'' + x[1] + '\')">' + x[0] + '<span class="ping' + x[1] + '"></span></b><br>';
         });
+        $('#users').innerHTML = '';
+        d.users.forEach(x => {
+          $('#users').innerHTML +=
+            '<b onclick="mention(\'' + x[1] + '\')">' + (x[0].match(/.{0,16}/)?.[0] || '') +
+            ' <span id="status' + x[1] + '">' + statuses[x[2]] + '</span></b><br>';
+        });
+        users = Object.fromEntries(d.users.map(x => [x[1], [x[0], x[2]]]));
         channels = Object.fromEntries(d.channels.map(x => [x[1], x[0]]));
         clearmsg();
         break;
       case 'msgs':
         if (d.channel != channel) break;
-        document.querySelector('#msg').style.display = 'inline';
+        $('#msg').style.display = 'inline';
         d.content.forEach(x => createmsg(x.user, x.data));
         break;
       case 'message':
         createmsg(d.user, d.data);
         break;
       case 'ping':
-        document.querySelector('.ping' + d.channel).innerHTML = ' <span style="color:red">!</span>';
+        $('.ping' + d.channel).innerHTML = ' <span style="color:red">!</span>';
+        break;
+      case 'status':
+        $('#status' + d.user).innerHTML = statuses[d.data];
+        users[d.user] = d.data;
         break;
     }
   }
@@ -62,29 +80,35 @@ let lastmsgfrom = '';
 
 function createmsg(from, data) {
   if (lastmsgfrom != from)
-    document.querySelector('#msgs').innerHTML += '<b>' + from + '</b><br>'
+    $('#msgs').innerHTML += '<b  onclick="mention(\'' +
+      (Object.entries(users).find(x => x[1][0] == from)?.[0] || '') + '\')">' + from + '</b><br>'
   let q = document.createElement('q');
-  q.innerText = data;
-  document.querySelector('#msgs').innerHTML += q.innerHTML + '<br>';
+  q.innerText = data.replace(/<@(\d{15,20})>/, (_, x) => '[@' + (users[x]?.[0] || 'unknown') + ']');
+  $('#msgs').innerHTML += q.innerHTML + '<br>';
   lastmsgfrom = from;
-  document.querySelector('#msgs').scrollTop = document.querySelector('#msgs').scrollHeight;
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
 }
 
 function clearmsg() {
   lastmsgfrom = '';
-  document.querySelector('#msgs').innerHTML = '';
+  $('#msgs').innerHTML = '';
 }
 
 function switchchannel(c) {
-  let x = document.querySelector('.ping' + channel);
+  let x = $('.ping' + channel);
   if (x) x.innerHTML = '';
   channel = c;
-  document.querySelector('#channel').innerText = channels[channel];
-  document.querySelector('.ping' + channel).innerHTML = ' <';
+  $('#channel').innerText = channels[channel];
+  $('.ping' + channel).innerHTML = ' <';
   clearmsg();
-  document.querySelector('#msg').style.display = 'none';
+  $('#msg').style.display = 'none';
   ws.send(JSON.stringify({
     type: 'getmsgs',
     channel
   }))
+}
+
+function mention(user) {
+  if (user)
+    $('#msg').value += '<@' + user + '>';
 }
