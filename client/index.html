@@ -1,68 +1,79 @@
-<title>DAS</title>
-<script src="script.js"></script>
-<style>
-  body {
-    margin: 0px;
-    background: black;
-    color: white;
-    font-family: monospace;
-  }
+<!DOCTYPE html>
+<html>
 
-  #channels {
-    float: left;
-    padding: 8px;
-    height: calc(100vh - 16px);
-    width: 200px;
-    border-right: 1px solid white;
-    overflow: scroll;
-  }
+<head>
+  <title>DAS</title>
+  <script src="script.js"></script>
+  <style>
+    body {
+      margin: 0px;
+      background: black;
+      color: white;
+      font-family: monospace;
+      overflow: clip;
+    }
 
-  #msgs {
-    padding: 8px;
-    height: calc(100vh - 48px);
-    overflow: scroll;
-  }
+    #channels {
+      float: left;
+      padding: 8px;
+      height: calc(100vh - 16px);
+      width: 200px;
+      border-right: 1px solid white;
+      overflow: scroll;
+    }
 
-  #msg {
-    margin: 4px;
-    height: 24px;
-    width: calc(100% - 226px);
-    border: 1px solid white;
-    border-radius: 0;
-    outline: none;
-    background: black;
-    color: white;
-    font-family: monospace;
-  }
+    #msgs {
+      padding: 8px;
+      height: calc(100vh - 48px);
+      overflow: scroll;
+    }
 
-  #tl {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 5px;
-  }
+    #msg {
+      margin: 4px;
+      height: 24px;
+      width: calc(100% - 240px);
+      border: 1px solid white;
+      border-radius: 0;
+      outline: none;
+      background: black;
+      color: white;
+      font-family: monospace;
+    }
 
-  b {
-    cursor: pointer;
-  }
+    #tl {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 5px;
+    }
 
-  #googer {
-    width: 150px;
-    cursor: pointer;
-  }
-</style>
-<div id="channels">
+    b {
+      cursor: pointer;
+    }
 
-</div>
-<div id="msgs">
+    #googer {
+      width: 150px;
+      cursor: pointer;
+    }
+  </style>
+</head>
 
-</div>
-<div id="tl">
-  <span id="channel"></span>
-  <details>
-    <summary id="googer">users</summary>
-    <span id="users"></span>
-  </details>
-</div>
-<input id="msg" style="display: none"
-  onkeypress="if(event.key=='Enter'&&this.value){sendmsg(this.value);this.value=''}">
+<body>
+  <div id="tl">
+    <span id="channel"></span>
+    <details>
+      <summary id="googer">users</summary>
+      <span id="users"></span>
+    </details>
+  </div>
+  <div id="channels">
+
+  </div>
+  <div id="msgs">
+
+  </div>
+  <input id="msg" style="display: none"
+    onkeypress="if(event.key=='Enter'&&this.value){sendmsg(this.value);this.value=''}">
+</body>
+
+</html>

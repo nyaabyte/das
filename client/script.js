@@ -1,4 +1,6 @@
 const $ = x => document.querySelector(x);
+const title = 'DAS';
+let ping = 0;
 let ws, channel;
 let statuses = {
   online: '&#128994;',
@@ -48,9 +50,17 @@ function connect() {
         d.content.forEach(x => createmsg(x.user, x.data));
         break;
       case 'message':
+        if (document.visibilityState == 'hidden') {
+          ping++;
+          updateTitle();
+        }
         createmsg(d.user, d.data);
         break;
       case 'ping':
+        if (document.visibilityState == 'hidden') {
+          ping++;
+          updateTitle();
+        }
         $('.ping' + d.channel).innerHTML = ' <span style="color:red">!</span>';
         break;
       case 'status':
@@ -111,4 +121,15 @@ function switchchannel(c) {
 function mention(user) {
   if (user)
     $('#msg').value += '<@' + user + '>';
+}
+
+document.onvisibilitychange = () => {
+  if (document.visibilityState == 'visible') {
+    ping = 0;
+    updateTitle();
+  }
+}
+
+function updateTitle() {
+  $('title').innerHTML = title + (ping ? ' (' + ping + ')' : '');
 }
