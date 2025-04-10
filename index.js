@@ -52,7 +52,7 @@ wss.on('connection', async (ws, req) => {
       .sort((a, b) => a.rawPosition - b.rawPosition)
       .map(x => [x.name, x.id]),
     users: userlist
-      .filter(x => !x.bot)
+      .filter(x => !x.user.bot)
       .map(x => [x.user.globalName || x.user.username, x.id, x.presence?.status || "offline"])
       .sort((a, b) =>
         (b[2] == 'offline' ? -1 : b[2] == 'dnd' ? -2 : 1) -
